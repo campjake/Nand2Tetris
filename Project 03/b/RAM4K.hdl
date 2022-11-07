@@ -15,5 +15,27 @@ CHIP RAM4K {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // This is the exact same as the 64 AND THE 512 but we change the RAM64's
+    // and then the address bits change to 8
+    // DMux8Way feeds load command to the right register
+    // OK to reuse because the width hasn't changed!
+    DMux8Way(in=load, sel=address[0..2], a=dMuxA, b=dMuxB,
+             c=dMuxC, d=dMuxD, e=dMuxE, f=dMuxF, 
+             g=dMuxG, h=dMuxH);
+
+    //Replace registers from RAM64 chip with RAM512
+    RAM512(in=in, load=dMuxA, address=address[3..11], out=ram512AOut);
+    RAM512(in=in, load=dMuxB, address=address[3..11], out=ram512BOut);
+    RAM512(in=in, load=dMuxC, address=address[3..11], out=ram512COut);
+    RAM512(in=in, load=dMuxD, address=address[3..11], out=ram512DOut);
+    RAM512(in=in, load=dMuxE, address=address[3..11], out=ram512EOut);
+    RAM512(in=in, load=dMuxF, address=address[3..11], out=ram512FOut);
+    RAM512(in=in, load=dMuxG, address=address[3..11], out=ram512GOut);
+    RAM512(in=in, load=dMuxH, address=address[3..11], out=ram512HOut);
+
+    // Mux8Way16 wires it all back with out
+    // OK to reuse because the width hasn't changed!
+    Mux8Way16(a=ram512AOut, b=ram512BOut, c=ram512COut,
+              d=ram512DOut, e=ram512EOut, f=ram512FOut, 
+              g=ram512GOut, h=ram512HOut, sel=address[0..2], out=out);
 }
